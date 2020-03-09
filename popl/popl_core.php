@@ -11,4 +11,5 @@ function popl_core_lib_import(){
     }
 }
 
+const POPL_IS_START = true;
 popl_core_lib_import();

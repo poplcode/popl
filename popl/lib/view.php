@@ -1,33 +1,30 @@
 <?php
-function popl_view_layout($layout_path=null){
-    // direct 접근 체크
-    if (isset($GLOBALS["POPL_VIEW_FROM_POPL"]) === false){
-        popl_view_404();
-        exit();
-    }
 
-    // 레이아웃을 안 쓸 경우
-    if ($layout_path == null){
-        return;
-    }else{ // 직접 쓸 경우
-        $GLOBALS["POPL_VIEW_LAYOUT"] = $layout_path;
+function popl_get_view_path($path){
+    $view_path = dirname($_SERVER["SCRIPT_FILENAME"]) . "/" . $path . ".php";
+    
+    if (popl_str_startsWith($path, "/")){
+        $view_path = $_SERVER["DOCUMENT_ROOT"] . $path . ".php";
     }
+    return $view_path;
 }
 
-function popl_view($path, $data=[]){
+function popl_view($path, $data=[]){   
+    $view_path = popl_get_view_path($path);    
+
     ob_clean();
     extract($data);
     $GLOBALS["POPL_VIEW_FROM_POPL"] = true;
     ob_start();
-    require($_SERVER["DOCUMENT_ROOT"] . $path . ".php");
+    require($view_path);
     $POPL_VIEW_CONTENT = ob_get_clean();
     
     // layout render
 
-    if (isset($GLOBALS["POPL_VIEW_LAYOUT"])){
-        $popl_view_layout = $GLOBALS["POPL_VIEW_LAYOUT"];
+    if (isset($POPL_VIEW_LAYOUT)){        
         ob_start();
-        require($_SERVER["DOCUMENT_ROOT"] . $popl_view_layout . ".php");
+        $popl_view_layout = popl_get_view_path($POPL_VIEW_LAYOUT);
+        require($popl_view_layout);
         $output = ob_get_clean();
         echo $output;        
     }else{
