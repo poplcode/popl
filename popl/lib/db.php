@@ -61,21 +61,44 @@ function popl_db_make_limit($limit){
     return " limit $limit";
 }
 
+function set_upsert_date_column($row){
+    if (popl_array_has_key($row, "insert_date") 
+        && popl_array_has_key($row, "update_date")
+        && popl_array_has_key($row, "upsert_date") === false    
+        ){
+        $row['upsert_date'] = $row['update_date'] != null ? $row['update_date'] : $row['insert_date'];
+    }else{
+        $row['upsert_date'] = null;
+    }    
+
+    return $row;
+}
+
 function popl_db_select($table_name, $kvParam=[], $orderby='', $limit=null){
     $terms = popl_db_make_terms($kvParam);
     $orderby = popl_db_make_orderby($orderby);
     $limit = popl_db_make_limit($limit);
     $query = "select * from $table_name $terms $orderby $limit";
-    return popl_db_fetch_all($query, $kvParam);
+    $result =  popl_db_fetch_all($query, $kvParam);    
+    foreach ($result as $idx => $row){
+        $row = set_upsert_date_column($row);
+        $result[$idx] = $row;
+    }
+    return $result;
 }
 
 function popl_db_select_first($table_name, $kvParam=[], $orderby=''){
     $result = popl_db_select($table_name, $kvParam, $orderby, 1);
     if (count($result) == 1){
-        return $result[0];
+        $result = $result[0];        
+        return $result;
     }
 
     return null;
+}
+
+function popl_db_select_first_by_id($table_name, $id){
+    return popl_db_select_first($table_name, ['id'=>$id]);
 }
 
 function popl_db_select_exist($table_name, $kvParam=[]){
