@@ -1,3 +1,4 @@
+<?php if (defined('POPL_IS_START') === false){die();} ?>
 <!DOCTYPE html>
 <head>
     <title><?= $title ?></title>
