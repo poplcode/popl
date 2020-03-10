@@ -13,8 +13,7 @@ function popl_view($path, $data=[]){
     $view_path = popl_get_view_path($path);    
 
     ob_clean();
-    extract($data);
-    $GLOBALS["POPL_VIEW_FROM_POPL"] = true;
+    extract($data);    
     ob_start();
     require($view_path);
     $POPL_VIEW_CONTENT = ob_get_clean();
@@ -32,17 +31,18 @@ function popl_view($path, $data=[]){
     }
 }
 
-function popl_view_object($path, $data=[]){
-    $new_vals = [];
-    foreach($data as $key=>$val){
-        if (is_array($val)){
-            $new_vals[$key] = (object) $val;
-        }else{
-            $new_vals[$key] = $val;
-        }
-    }
+function popl_view_layout_direct_start(){
+    ob_clean();
+    ob_start();
+}
 
-    return popl_view($path, $new_vals);
+function popl_view_layout_direct_end($POPL_VIEW_LAYOUT, $data=[]){
+    extract($data);
+    $POPL_VIEW_CONTENT = ob_get_clean();
+    $popl_view_layout = popl_get_view_path($POPL_VIEW_LAYOUT);
+    require($popl_view_layout);
+    $output = ob_get_clean();
+    echo $output;        
 }
 
 function popl_view_404($path="/views/404", $data=[]){
