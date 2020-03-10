@@ -1,5 +1,5 @@
 <?php
-function popl_prehandle(){
+function popl_prehandle_param(){
     foreach(['get' => $_GET, 'post' =>$_POST] as $key=>$params){
         $new_arr = [];        
         
