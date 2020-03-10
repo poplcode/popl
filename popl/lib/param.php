@@ -25,3 +25,37 @@ function popl_param_get($param_name, $rules, $default=False){
 function popl_param_post($param_name, $rules, $default=False){
     return popl_param($_POST, $param_name, $rules, $default);
 }
+
+function popl_param_san_html_encode($arr, $param_name, $rules, $default){
+    $input = popl_param($arr, $param_name, $rules);
+    if ($input === false){
+        return $default;
+    }else{
+        return popl_san_html_encode($input);
+    }
+}
+
+function popl_param_get_san_html_encode($param_name, $rules, $default=False){
+    return popl_param_san_html_encode($_GET, $param_name, $rules, $default);
+}
+
+function popl_param_post_san_html_encode($param_name, $rules, $default=False){
+    return popl_param_san_html_encode($_POST, $param_name, $rules, $default);
+}
+
+function popl_param_san_html_remove($arr, $param_name, $rules, $default=False){
+    $input = popl_param($arr, $param_name, $rules);
+    if ($input === false){
+        return $default;
+    }else{
+        return popl_san_html_remove($input);
+    }
+}
+
+function popl_param_get_san_html_remove($param_name, $rules, $default=False){
+    return popl_param_san_html_remove($_GET, $param_name, $rules, $default);
+}
+
+function popl_param_post_san_html_remove($param_name, $rules, $default=False){
+    return popl_param_san_html_remove($_POST, $param_name, $rules, $default);
+}
