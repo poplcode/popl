@@ -12,13 +12,31 @@ function popl_db_get_pdo(){
     return $pdo;
 }
 
-// Create, Update, Delete
+// Update, Delete
 function popl_db_execute($query, $param){
     $pdo = popl_db_get_pdo();
     $st = $pdo->prepare($query);
     $result = $st->execute($param);
     $pdo = null;
     return $result;
+}
+
+function popl_db_execute_last_id($query, $param){
+    $pdo = popl_db_get_pdo();
+    try{
+        $st = $pdo->prepare($query);
+        $result = $st->execute($param);
+        $last_id = $pdo->lastInsertId();
+        $pdo = null;
+        if ($result){
+            return $last_id;
+        }else{
+            return false;
+        }
+    }catch(PDOException $ex){
+        return false;
+    }
+    
 }
 
 // select
@@ -124,7 +142,7 @@ function popl_db_insert($table_name, $kvparam=[]){
 
     $query = "insert into $table_name ($strColumn) values ($strValuePlaceHolders)";
 
-    return popl_db_execute($query, $kvparam);
+    return popl_db_execute_last_id($query, $kvparam);
 }
 
 function popl_db_set_default_values($kvparam, $default_key_vals){
