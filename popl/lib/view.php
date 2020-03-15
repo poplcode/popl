@@ -20,6 +20,7 @@ function popl_view($path, $data=[]){
     
     // layout render
 
+    header('Content-Type: text/html; charset=UTF-8');
     if (isset($POPL_VIEW_LAYOUT)){        
         ob_start();
         $popl_view_layout = popl_get_view_path($POPL_VIEW_LAYOUT);
@@ -42,6 +43,7 @@ function popl_view_layout_direct_end($POPL_VIEW_LAYOUT, $data=[]){
     $popl_view_layout = popl_get_view_path($POPL_VIEW_LAYOUT);
     require($popl_view_layout);
     $output = ob_get_clean();
+    header('Content-Type: text/html; charset=UTF-8');
     echo $output;        
 }
 
