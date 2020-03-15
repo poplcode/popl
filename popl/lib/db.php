@@ -181,9 +181,13 @@ function popl_db_update($table_name, $kvparam, $where_terms){
     $terms = popl_db_make_terms($where_terms);
     $total_kv = array_merge($kvparam, $where_terms);
     
-    $query = "update $table_name set $strPlaceHolders $terms";
-    $result = $this->execute($query,$total_kv);
+    $query = "update $table_name set $strPlaceHolders $terms";    
+    $result = popl_db_execute($query, $total_kv);    
     return $result;
+}
+
+function popl_db_update_by_id($table_name, $kvparam, $id){
+    return popl_db_update($table_name, $kvparam, ['id'=>$id]);
 }
 
 function popl_db_update_standard($table_name, $kvparam, $where_terms){
@@ -195,6 +199,12 @@ function popl_db_update_standard($table_name, $kvparam, $where_terms){
 
     return popl_db_update($table_name, $kvparam, $where_terms);    
 }
+
+function popl_db_update_standard_by_id($table_name, $kvparam, $id){
+    return popl_db_update_standard($table_name, $kvparam, ['id'=>$id]);
+}
+
+
 
 function popl_db_upsert($table_name, $kvparam, $where_terms){
     if (popl_db_select_exist($table_name, $where_terms)){
@@ -221,4 +231,26 @@ function popl_db_delete($table_name, $where_terms){
 function popl_db_delete_by_id($table_name, $id){
     $where_terms = ['id'=>$id];
     return popl_db_delete($table_name, $where_terms);
+}
+
+function popl_db_create_table_standard($table_name, $columns=[]){
+    $use_create_table = popl_import_config("use_create_table");
+    if ($use_create_table === false){        
+        return;
+    }
+
+    $query = "CREATE TABLE IF NOT EXISTS `$table_name` (" . PHP_EOL;
+    $query .= "id int(11) NOT NULL AUTO_INCREMENT," . PHP_EOL;
+    $query .= popl_array_map_join($columns, function($column){return "$column TEXT NULL";},",".PHP_EOL);
+    $query .= <<<CDATA
+,use_yn char(1) NOT NULL DEFAULT 'Y',
+insert_date varchar(19) NOT NULL,
+update_date varchar(19) NULL,
+PRIMARY KEY (id)
+)DEFAULT CHARSET=utf8;
+CDATA;
+    echo $query;
+    popl_db_execute($query, []);
+
+
 }
