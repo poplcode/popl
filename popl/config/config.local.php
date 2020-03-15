@@ -7,3 +7,5 @@ $db_config = [
     'username' => 'popl',
     'password' => 'popl_pw'
 ];
+
+$use_create_table_config = true;

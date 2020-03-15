@@ -7,3 +7,5 @@ $db_config = [
     'username' => '',
     'password' => ''
 ];
+
+$use_create_table_config = false;
