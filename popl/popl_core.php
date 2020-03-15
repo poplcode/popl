@@ -11,5 +11,6 @@ function popl_core_lib_import(){
     }
 }
 
+ini_set('default_charset', 'utf-8');
 const POPL_IS_START = true;
 popl_core_lib_import();
